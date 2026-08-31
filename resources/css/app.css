@@ -1,0 +1,211 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+
+@theme {
+    --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
+        'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-display: 'Quicksand', 'Plus Jakarta Sans', ui-rounded, ui-sans-serif, system-ui, sans-serif;
+
+    /* ---------------------------------------------------------------- base */
+    --color-canvas: #f7f6f4;
+    --color-surface: #ffffff;
+    --color-sunken: #f0eeea;
+    --color-line: #e6e3dd;
+    --color-line-strong: #d3cfc7;
+    --color-ink: #2b2823;
+    --color-ink-soft: #5c574f;
+    --color-muted: #918b81;
+
+    /* -------------------------------------------- pastels (content colour) */
+    --color-grape: #8b7cf6;
+    --color-grape-soft: #eeeaff;
+    --color-grape-ink: #5b45d6;
+
+    --color-blossom: #f47f9d;
+    --color-blossom-soft: #ffe8ee;
+    --color-blossom-ink: #c9456c;
+
+    --color-sky: #4fb0e8;
+    --color-sky-soft: #e3f2fc;
+    --color-sky-ink: #1d7cb8;
+
+    --color-mint: #3fc4a8;
+    --color-mint-soft: #dcf5ef;
+    --color-mint-ink: #158d75;
+
+    --color-butter: #f2b53c;
+    --color-butter-soft: #fdf1d9;
+    --color-butter-ink: #b57e08;
+
+    --color-peach: #f79663;
+    --color-peach-soft: #ffe9dd;
+    --color-peach-ink: #d66735;
+
+    /* Warna merek, diambil dari logo pin-dan-rumah. */
+    --color-coral: #d94440;
+    --color-coral-soft: #ffeceb;
+    --color-coral-ink: #b93b39;
+
+    /* ------------------------------------------- semantic aliases (in use) */
+    /*
+     * Aksen memakai coral yang cukup gelap: teks putih di atasnya mencapai
+     * rasio 4.33:1, sementara coral cerah logo (#ef7a78) hanya 2.72:1 dan
+     * tidak terbaca sebagai tombol.
+     */
+    --color-accent: var(--color-coral);
+    --color-accent-soft: var(--color-coral-soft);
+    --color-accent-ink: var(--color-coral-ink);
+
+    --color-warn: var(--color-butter-ink);
+    --color-warn-soft: var(--color-butter-soft);
+    /*
+     * Karena aksennya kini merah, bahaya harus jelas lebih gelap dan pekat —
+     * kalau tidak, tombol hapus terlihat sama dengan tombol utama.
+     */
+    --color-danger: #a01810;
+    --color-danger-soft: #fdeceb;
+}
+
+/*
+ * Type scale — four weights only:
+ *   400 body · 500 labels and nav · 600 buttons and headings · 700 page titles
+ *
+ * Surfaces — a card gets a hairline border OR a tint, never both plus a shadow.
+ * There are no drop shadows, no blurred colour blobs and no backdrop blur:
+ * depth comes from the border and the background step alone.
+ */
+@layer base {
+    html {
+        -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+        @apply bg-canvas font-normal text-ink antialiased;
+    }
+
+    h1,
+    h2,
+    h3 {
+        @apply font-display font-semibold tracking-tight;
+    }
+
+    h1 {
+        @apply font-bold;
+    }
+
+    :focus-visible {
+        @apply outline-2 outline-offset-2 outline-accent;
+    }
+
+    ::selection {
+        @apply bg-accent-soft text-accent-ink;
+    }
+}
+
+@layer components {
+    .card {
+        @apply rounded-2xl border border-line bg-surface;
+    }
+
+    .field {
+        @apply w-full rounded-xl border border-line-strong bg-surface px-3.5 py-2.5 text-sm
+               font-medium text-ink transition-colors placeholder:font-normal placeholder:text-muted
+               focus:border-accent focus:outline-none;
+    }
+
+    /*
+     * Setiap <select> memakai .field, jadi chevron-nya dipasang di sini
+     * sebagai background — otomatis berlaku untuk semua dropdown.
+     */
+    select.field {
+        @apply cursor-pointer appearance-none bg-no-repeat pr-9;
+        background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23918b81' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+        background-position: right 0.7rem center;
+        background-size: 1rem 1rem;
+    }
+
+    select.field:focus {
+        background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235b45d6' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    }
+
+    .label {
+        @apply mb-1.5 block text-xs font-medium text-ink-soft;
+    }
+
+    /* Shared button geometry — variants below only add colour. */
+    .btn,
+    .btn-primary,
+    .btn-secondary,
+    .btn-ghost,
+    .btn-danger {
+        @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm
+               font-semibold transition-colors
+               disabled:cursor-not-allowed disabled:opacity-45;
+    }
+
+    /*
+     * Satu aturan hover untuk semua varian, supaya responsnya terasa sama:
+     * tombol berisi menggelapkan isinya satu langkah jelas, tombol bergaris
+     * dan hantu mendapat isian `line` — putih ke `sunken` hanya beda 4%, nyaris
+     * tak terlihat, jadi dulu terasa mati saat disentuh kursor.
+     */
+    .btn-primary {
+        @apply bg-accent text-white hover:bg-accent-ink;
+    }
+
+    .btn-secondary {
+        @apply border border-line-strong bg-surface text-ink hover:border-ink-soft hover:bg-line;
+    }
+
+    .btn-ghost {
+        @apply text-ink-soft hover:bg-line hover:text-ink;
+    }
+
+    .btn-danger {
+        @apply bg-danger-soft text-danger hover:bg-danger hover:text-white;
+    }
+
+    .chip {
+        @apply inline-flex items-center gap-1.5 rounded-lg bg-sunken px-2.5 py-1 text-xs
+               font-medium text-ink-soft;
+    }
+}
+
+/* Hide scrollbars on horizontal rails without losing scrollability. */
+.no-scrollbar {
+    scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+/*
+ * Toast masuk dengan geser-pudar pendek.
+ *
+ * Bukan hiasan: dua kabar beruntun sering berbunyi sama persis, jadi gerakan
+ * itulah satu-satunya tanda bahwa yang tampil sekarang adalah kabar yang baru.
+ */
+@keyframes toast-in {
+    from {
+        opacity: 0;
+        transform: translateY(-0.5rem) scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+.toast-enter {
+    animation: toast-in 180ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .toast-enter {
+        animation: none;
+    }
+}
